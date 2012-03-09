@@ -1,0 +1,13 @@
+#Temporary Editor Files#
+*~
+\#*\#
+*.swp
+
+#Build Files#
+*.o
+
+#Output Files#
+
+#LaTeX Cruf#
+handout/*.log
+handout/*.aux
