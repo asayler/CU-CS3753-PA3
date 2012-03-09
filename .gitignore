@@ -6,6 +6,10 @@
 #Build Files#
 *.o
 
+#Executable Files#
+pi
+pi-sched
+
 #Output Files#
 
 #LaTeX Cruf#
