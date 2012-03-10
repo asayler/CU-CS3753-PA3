@@ -13,9 +13,10 @@
 \author{
   CSCI 3753 - Operating Systems\\
   University of Colorado at Boulder\\
-  Due Date:  Friday, March 23, 2012 11:55pm
+  Spring 2012\\
+  By Andy Sayler and Junho Ahn and Richard Han
 }
-\date{Spring 2012}
+\date{\emph{Due Date:  Friday, March 23, 2012 11:55pm}}
 
 \begin{document}
 
@@ -40,7 +41,8 @@ Linux install with few other programs running simultaneously. Whatever
 environment you chose to use must be used consistently throughout this
 assignment. Switching environments part way through The assignment
 will make it difficult, if not impossible, to accurately compare and
-contrast your data.
+contrast your data. Be sure to document your environment in your
+report.
 
 \section{The Linux Scheduler}
 
@@ -90,24 +92,27 @@ handles any polices it implements. See Figure \ref{fig:LSClasses}.
   \end{center}
 \end{figure}
 
-In Linux, each processor has it's own run queue structure. Originally this
+In Linux, each processor has its own run queue structure. Originally this
 structure was a single queue that maintained a list of processes for
-each processor to run (hence the name run queue or running queue).
+each processor to run (hence the name ``run queue'').
 Today, this structure actually contains a collection of
-sub-structures, where each sub-structure corresponds to the necessary
+sub-structures (or pointers to sub-structures),
+where each sub-structure corresponds to the necessary
 data structure(s) for each scheduling class. Since Linux currently
 has two scheduling classes, CFS and RT, each run queue structure
-contains a copy of a CFS run queue structure and a RT run queue
+contains a pointer to a CFS run queue structure and a RT run queue
 structure. These
 run queue structures are managed by their respective scheduling
 classes. Also, note that although we still use the phrase ``run queue''
 many of these structures are no longer actually queues. For instance, the CFS
-class uses a Red-Black Tree as its so classed ``run queue''. We will
+class uses a Red-Black Tree as its so called ``run queue''. We will
 use the term ``run queue'' in this wider since to refer to any data
 structure that a class uses to organize or derive a scheduling order for a
 set of processes.
 
-In a SMP Multiprocessor installation there is also a load balancing system
+In a Linux SMP multiprocessor installation there is one set of run queue
+structures per processor (or core). This means there must also be
+a load balancing system
 to move tasks from one run queue to another. Like the rest of the
 scheduling system, load balancing is handled separately by each
 scheduling class. Figure \ref{fig:LSOverview} provides an illustration
@@ -211,7 +216,10 @@ three levels of system utilization:
 The three testing vectors mentioned above give rise to 27 possible
 test cases (every possible combination of each of the three elements
 from each of the three vectors). You will need to gather data for all
-27 of these cases.
+27 of these cases. You should probably also repeat each
+test case a few times and average the results over this set
+of runs. This will help insure that you are getting good data and
+will minimize the effect of spurious events.
 
 Once you have gathered all of your data, you will need to analyze it
 to answer the following questions:
@@ -255,9 +263,9 @@ test system and setup.
 The report should be no longer than necessary to effectively convey your
 meaning. Excluding the Appendices, 10 pages would seem a reasonable
 upper limit, but adjust as necessary. The report should be written in
-active, first person and should adhere to the standards of good
-writing. References may be in any format you chose, as long as they
-convey the point.
+active, first person English and should adhere to the standards of good
+writing \cite{StrunkWhite,K&R}. References may be in any format you chose,
+as long as they convey the point.
 
 Assume that your audience is educated in the subject
 (i.e. the course TAs or professor). Thus, you need not dwell on
@@ -285,7 +293,7 @@ Algorithms for these and other CPU
 heavy tasks can be found online and in reference texts.
 
 To create an
-I/O bound process, consider writing a process that writes B bytes to a
+I/O bound program, consider writing a program that writes B bytes to a
 file, and then reads the B bytes back from the file, repeating N
 times. You may need to pick B and N such that you can overcome the
 caching effects of the system in order to get the best data. The Linux
@@ -310,7 +318,7 @@ children. Your children processes will then carry out the necessary
 work for the given test program as discussed above.
 You will need to make sure that your parent process waits on
 each child to insure they are properly reaped, avoiding zombie
-processes. This becomes extra important when you start gathering data,
+processes. This becomes especially important when you start gathering data,
 as you will not be able to properly collect performance metrics from
 zombie processes. 
 
@@ -322,7 +330,9 @@ will be inherited by any forked children within the program. You must pass
 The \texttt{SCHED\_DEFAULT} priority should always be
 0. \texttt{SCHED\_RR} and \texttt{SCHED\_FIFO} should have priorities
 greater than 0, but should be the same for all tests so that process
-priority is not a factor in your benchmark results. The RT scheduling
+priority is not a factor in your benchmark results. You may use the
+\texttt{sched\_get\_priority\_max} function to find the max priority a
+given schedule policy supports. In addition, the RT scheduling
 polices can only be run by a privileged user. Thus, you will need to
 use the \texttt{sudo} command to run any benchmark that uses a RT
 scheduling policy.
@@ -330,12 +340,15 @@ scheduling policy.
 Using the above steps, you can write a generalized version of each
 of the three necessary test programs that takes as arguments the
 scheduler class and
-the number of copies to spawn.
+the number of copies to spawn (and, if desired, some measure of the
+amount of time, number of iterations, etc that it should run each copy).
 You could then write a script that calls each program with the
 appropriate parameters to generate test runs
 across the 27 different combinations of test values. Remember, the
-computer works for you, not the other way around. Also, note that you
-should wait for each specific test to complete before
+computer works for you, not the other way around.
+
+Note that you
+should wait for each specific test case to complete before
 starting the next. You will adversely intertwine your results if you
 run multiple tests simultaneously. Also note that you will
 need a minimum value of 5 to 10 simultaneous copies (children) of each test
@@ -349,44 +362,48 @@ nothing to schedule.
 The previous section focused on building benchmark programs, but does
 not include any info on actually gathering data on the performance of
 these programs. Linux provides a number of ways to collect metrics on
-a programs performance. We discuss a few here.
+a program's performance. We discuss a few here.
 
 The simplest means of collecting performance metrics is to use the Linux
 \texttt{time} command. The GNU version of this command returns a
 wealth of data about a program, including the system time, user time,
 real time, and number of context switches. All of this data can be
 used to gain insights into the behavior of the various scheduling
-classes.
+classes. With proper scripting, you can even automatically collect and
+average this data over several test runs of each test case.
 
-The upside to using time is that you may apply it directly to each of
+The upside to using \texttt{time} is that you may apply it directly to each of
 the test programs you have built, without needing to modify any of the
 test code discussed above (except maybe the top level script).
-The downside to using the time command is that you will only be able to gather
-the total aggregate data for each test run. You will not be able to gain any
+The downside to using the \texttt{time} command is that you will only be able to gather
+the total aggregate data for each test case. You will not be able to gain any
 insight into the fine grain distribution of this data across each
-specific child process instance. Assuming your test program properly waits
+specific child instance. Assuming your test program properly waits
 on any children that it spawns, the results returned by \texttt{time}
 will be the sum of the results from the parent process and any
 descendants. You can use this to compute the average resource usage of
 each test program child instance by dividing the results by the number
-of instanced spawned in a given test run.
+of instanced spawned in a given test case.
 This averaged data may be fine for your
 purposes, or it may leave you needing finer grain data.
 
 If you want to gather the same data that \texttt{time} can give you,
 but for each individual child process instance, you can use the
-\texttt{getrusage} system call. This function will need to be built
-directly into your test programs, but will allow you to gather data as
-each child process finished. You may have to use this function in
-conjunction with the necessary signal handlers to insure it gets
-called each time a child process exits. It may be wise to start by
-using the \texttt{time} command and to only add \texttt{getrusage} if
-you feel you need it.
+\texttt{getrusage} or \texttt{wait4} system calls. Unlike
+\texttt{time}, these function will need to be built
+directly into your test programs. They will, however allow you to
+gather data on each individual child process as it finished and is
+reaped. If using \texttt{getrusage}, you may have to setup
+the necessary signal handlers to insure it gets
+called each time a child process exits. If using \texttt{wait4}, you
+can gather statistics on each child process as it is reaped.
 
-As a final note on gather good data, you should probably repeat each
-test case a few times and average the test cases values over the set
-of all runs. This will help insure that you are getting good data and
-will minimize the effect of spurious events.
+It may be wise to start by
+using the \texttt{time} command and to only add \texttt{getrusage} or
+\texttt{wait4} if you feel you need it. Alternatively, if you are
+uncomfortable with a scripting language and do not wish to record your
+results by hand, you could use \texttt{getrusage} or \texttt{wait4} to
+collect and process all necessary data inside a top level c program.
 
 \section{What You Must Provide}
 
@@ -401,6 +418,9 @@ single archive file:
 
 \section{What's Included}
 
+We provide some code to help get you started. Feel free to use it as a
+jumping off point (appropriately cited).
+
 \begin{enumerate}
 
 \item {\bf pi.c} The source code for a statistically-based pi
@@ -410,11 +430,22 @@ single archive file:
 \item {\bf pi-sched.c} Same as pi.c, but with the addition of the
   ability to select one of the following three Linux scheduling
   policies: SCHED\_OTHER, SCHED\_RR, or SCHED\_FIFO. Accepts a scheduling
-  policy as the second argument. \emph{Note: Only privileged users can
+  policy as the second argument.
+\emph{Note 1: Only privileged users can
   utilize the RT SCHED\_RR and SCHED\_FIFO policies.}
+\emph{Note 2:
+    Neither pi or pi-sched spawns multiple instances. This is
+    functionality you will need to add if you wish to use these
+    programs as part of your test suite}
+
+\item {\bf testscript} A simple bash script that runs and measures the
+  performance of a single instance of the pi-sched program across all
+  three scheduling policies.
 
 \item {\bf Makefile} A GNU Make makefile to build all the code listed
   here.
+
+\item {\bf README} As the title so eloquently instructs: read it.
 
 \end{enumerate}
 
@@ -443,7 +474,7 @@ this assignment exceed 110/100.
 \item {\bf Visualization}: Build or deploy a visualization system that
   will create visual representations of how various scheduling polices
   schedule the different tasks. Your output might look like the
-  process-time diagrams we have looked at in recitation. You will
+  Gantt charts we have looked at in recitation and class. You will
   probably have to use some form of process trace library to gather the
   necessary temporal data. {\bf 10 Points}
 \item {\bf Multi-Core}: Investigate how the various scheduling polices
@@ -479,37 +510,42 @@ consider forking the code from github. Using the github code is not
 a requirement, but it will help to insure that you stay up to date
 with any updates or changes to the supplied codebase. It is also
 good practice for the kind of development one might expect to do in
-a professional environment.
+a professional environment. And since your github code can be easily
+shared, it can be a good way to show off your coding skills to
+potential employers and other programmers.
 
-Github code may be forked from the project page here:
+Github code may be forked from the project page here:\\
 \url{https://github.com/asayler/CU-CS3753-2012-PA3}.
 
 \section{Resources}
 Refer to your textbook and class notes on the Moodle for an overview
 of OS scheduling policies and implementations.
 
-The Internet is also a good resource for finding information related
-to solving this assignment.
+The Internet\cite{tubes} is also a good resource for finding
+information related to solving this assignment.
 
 You may wish to consult the man pages for the following items, as they
 will be useful and/or required to complete this assignment. Note that
 the first argument to the ``man'' command is the chapter, insuring
 that you access the appropriate version of each man page. See
 \texttt{man man} for more information.
+
 \begin{itemize}
 \item \texttt{man 1 time}
 \item \texttt{man 2 sched\_setscheduler}
+\item \texttt{man 2 sched\_get\_priority\_max}
 \item \texttt{man 2 getrusage}
+\item \texttt{man 2 ptrace}
 \item \texttt{man 2 fork}
 \item \texttt{man 2 wait}
+\item \texttt{man 2 wait4}
 \item \texttt{man 4 random}
 \item \texttt{man 4 null}
 \item \texttt{man 5 proc}
 \item \texttt{man 7 sched.h}
 \end{itemize}
 
-\renewcommand{\refname}{\section{References}}
-\begin{thebibliography}{3}
+\begin{thebibliography}{9}
 
 \bibitem{Jones-InsideCFS} Jones, M. Tim.
   \newblock \emph{Inside the Linux 2.6 Completely Fair Scheduler}.
@@ -517,8 +553,13 @@ that you access the appropriate version of each man page. See
   \newblock Accessed 06/01/12.
   \newblock \url{http://www.ibm.com/developerworks/linux/library/l-completely-fair-scheduler/}.
 
+\bibitem{K&R} Kernighan, Brian and Dennis, Ritchie.
+  \newblock \emph{The C Programming Language}.
+  \newblock Second Edition: 2009.
+  \newblock Prentice Hall: New Jersey.
+
 \bibitem{Kolivas-BFS} Kolivas, Con.
-  \newblock \emph{BFS - The Barin Fuck Scheduler}.
+  \newblock \emph{BFS - The Brain Fuck Scheduler}.
   \newblock 2009.
   \newblock Accessed 06/01/12.
   \newblock \url{http://ck.kolivas.org/patches/bfs/sched-BFS.txt}.
@@ -547,6 +588,16 @@ that you access the appropriate version of each man page. See
   \newblock Accessed 06/01/12.
   \newblock \url{http://people.redhat.com/mingo/cfs-scheduler/sched-design-CFS.txt}.
 
+\bibitem{tubes} Stevens, Ted.
+  \newblock \emph{Speech on Net Neutrality Bill}.
+  \newblock 2006.
+  \newblock \url{http://youtu.be/f99PcP0aFNE}.
+
+\bibitem{StrunkWhite} Strunk, William, Jr. and White, E.B.
+  \newblock \emph{The Elements of Style}.
+  \newblock Fourth Edition: 2000.
+  \newblock Pearson: New York.
+  
 \end{thebibliography}
 
 \end{document}  

@@ -22,3 +22,6 @@ clean:
 	rm -f pi pi-sched
 	rm -f *.o
 	rm -f *~
+	rm -f handout/*~
+	rm -f handout/*.log
+	rm -f handout/*.aux
