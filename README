@@ -25,3 +25,12 @@ Build:
 
 Clean:
  make clean
+
+pi:
+ ./pi <Number of Iterations>
+
+pi-sched:
+ ./pi-sched <Number of Iterations> <Scheduling Policy>
+
+testscript:
+ ./testscript
