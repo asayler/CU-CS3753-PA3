@@ -217,7 +217,8 @@ Once you have gathered all of your data, you will need to analyze it
 to answer the following questions:
 
 \begin{itemize}
-\item Which scheduling policy is best suited for each process type?
+\item Which scheduling policy is best suited for each process type in
+  terms of run-time and overhead efficiency?
   Why? If there is not a clear winner, why not?
 \item How does each scheduling policy scale? Why?
 \item What are some pros and cons of each scheduling policy?
@@ -247,8 +248,8 @@ test system and setup.
 \item Analysis - Explanation of your results and what they indicate
 \item Conclusion - What you learned from your results
 \item References - Any external resources you consulted
-\item Appendix A - All Code
-\item Appendix B - Raw data
+\item Appendix A - Raw Data
+\item Appendix B - All Code
 \end{itemize}
 
 The report should be no longer than necessary to effectively convey your
@@ -382,6 +383,11 @@ called each time a child process exits. It may be wise to start by
 using the \texttt{time} command and to only add \texttt{getrusage} if
 you feel you need it.
 
+As a final note on gather good data, you should probably repeat each
+test case a few times and average the test cases values over the set
+of all runs. This will help insure that you are getting good data and
+will minimize the effect of spurious events.
+
 \section{What You Must Provide}
 
 When you submit your assignment, you must provide the following as a
@@ -393,6 +399,25 @@ single archive file:
 \item A README explaining how to build and run your code
 \end{itemize}
 
+\section{What's Included}
+
+\begin{enumerate}
+
+\item {\bf pi.c} The source code for a statistically-based pi
+  calculator. Accepts as the first argument the number of iterations to
+  compute over. Example of a CPU bound process.
+
+\item {\bf pi-sched.c} Same as pi.c, but with the addition of the
+  ability to select one of the following three Linux scheduling
+  policies: SCHED\_OTHER, SCHED\_RR, or SCHED\_FIFO. Accepts a scheduling
+  policy as the second argument. \emph{Note: Only privileged users can
+  utilize the RT SCHED\_RR and SCHED\_FIFO policies.}
+
+\item {\bf Makefile} A GNU Make makefile to build all the code listed
+  here.
+
+\end{enumerate}
+
 \section{Extra Credit}
 
 There are a few options for receiving extra credit on this
@@ -401,7 +426,7 @@ specified number of points. In no case will the maximum score on
 this assignment exceed 110/100.
 
 \begin{itemize}
-\item {\bf BFS}: The Brain Fuck Scheduler is an alternative to the
+\item {\bf BFS}: The BFS is an alternative to the
   CFS. It is actively maintained as a set of patches that
   can be found at
   \url{http://ck.kolivas.org/patches/bfs/}

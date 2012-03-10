@@ -1,3 +1,14 @@
+/*
+ * File: pi-sched.c
+ * Author: Andy Sayler
+ * Project: CSCI 3753 Programming Assignment 3
+ * Create Date: 2012/03/07
+ * Modify Date: 2012/03/09
+ * Description:
+ * 	This file contains a simple program for statistically
+ *      calculating pi using a specific scheduling policy.
+ */
+
 /* Local Includes */
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,7 +18,6 @@
 #include <sched.h>
 
 #define DEFAULT_ITERATIONS 1000000
-#define RTPRIORITY 1
 #define RADIUS (RAND_MAX / 2)
 
 inline double dist(double x0, double y0, double x1, double y1){
@@ -30,15 +40,16 @@ int main(int argc, char* argv[]){
     double pCircle = 0.0;
     double piCalc = 0.0;
 
-    fprintf(stdout, "argc: %d\n", argc);
-
+    /* Process program arguments to select iterations and policy */
+    /* Set default iterations if not supplied */
     if(argc < 2){
 	iterations = DEFAULT_ITERATIONS;
     }
+    /* Set default policy if not supplied */
     if(argc < 3){
 	policy = SCHED_OTHER;
-	param.sched_priority = 0;
     }
+    /* Set iterations if supplied */
     if(argc > 1){
 	iterations = atol(argv[1]);
 	if(iterations < 1){
@@ -46,36 +57,36 @@ int main(int argc, char* argv[]){
 	    exit(EXIT_FAILURE);
 	}
     }
+    /* Set policy if supplied */
     if(argc > 2){
 	if(!strcmp(argv[2], "SCHED_OTHER")){
 	    policy = SCHED_OTHER;
-	    param.sched_priority = 0;
 	}
 	else if(!strcmp(argv[2], "SCHED_FIFO")){
-	    fprintf(stdout, "SCHED_FIFO\n");
 	    policy = SCHED_FIFO;
-	    param.sched_priority = RTPRIORITY;
 	}
 	else if(!strcmp(argv[2], "SCHED_RR")){
 	    policy = SCHED_RR;
-	    param.sched_priority = RTPRIORITY;
 	}
 	else{
 	    fprintf(stderr, "Unhandeled scheduling policy\n");
 	    exit(EXIT_FAILURE);
 	}
     }
-
+    
+    /* Set process to max prioty for given scheduler */
+    param.sched_priority = sched_get_priority_max(policy);
+    
+    /* Set new scheduler policy */
     fprintf(stdout, "Current Scheduling Policy: %d\n", sched_getscheduler(0));
     fprintf(stdout, "Setting Scheduling Policy to: %d\n", policy);
-    
     if(sched_setscheduler(0, policy, &param)){
 	perror("Error setting scheduler policy");
 	exit(EXIT_FAILURE);
     }
+    fprintf(stdout, "New Scheduling Policy: %d\n", sched_getscheduler(0));
 
-    fprintf(stdout, "Current Scheduling Policy: %d\n", sched_getscheduler(0));
-
+    /* Calculate pi using statistical methode across all iterations*/
     for(i=0; i<iterations; i++){
 	x = (random() % (RADIUS * 2)) - RADIUS;
 	y = (random() % (RADIUS * 2)) - RADIUS;
@@ -85,9 +96,11 @@ int main(int argc, char* argv[]){
 	inSquare++;
     }
 
+    /* Finish calculation */
     pCircle = inCircle/inSquare;
     piCalc = pCircle * 4.0;
 
+    /* Print result */
     fprintf(stdout, "pi = %f\n", piCalc);
 
     return 0;

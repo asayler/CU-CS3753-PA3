@@ -1,12 +1,25 @@
+/*
+ * File: pi.c
+ * Author: Andy Sayler
+ * Project: CSCI 3753 Programming Assignment 3
+ * Create Date: 2012/03/07
+ * Modify Date: 2012/03/09
+ * Description:
+ * 	This file contains a simple program for statistically
+ *      calculating pi.
+ */
+
 /* Local Includes */
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <errno.h>
 
+/* Local Defines */
 #define DEFAULT_ITERATIONS 1000000
 #define RADIUS (RAND_MAX / 2)
 
+/* Local Functions */
 inline double dist(double x0, double y0, double x1, double y1){
     return sqrt(pow((x1-x0),2) + pow((y1-y0),2));
 }
@@ -25,9 +38,12 @@ int main(int argc, char* argv[]){
     double pCircle = 0.0;
     double piCalc = 0.0;
 
+    /* Process program arguments to select iterations and policy */
+    /* Set default iterations if not supplied */
     if(argc < 2){
 	iterations = DEFAULT_ITERATIONS;
     }
+    /* Set iterations if supplied */
     else{
 	iterations = atol(argv[1]);
 	if(iterations < 1){
@@ -36,6 +52,7 @@ int main(int argc, char* argv[]){
 	}
     }
 
+    /* Calculate pi using statistical methode across all iterations*/
     for(i=0; i<iterations; i++){
 	x = (random() % (RADIUS * 2)) - RADIUS;
 	y = (random() % (RADIUS * 2)) - RADIUS;
@@ -45,9 +62,11 @@ int main(int argc, char* argv[]){
 	inSquare++;
     }
 
+    /* Finish calculation */
     pCircle = inCircle/inSquare;
     piCalc = pCircle * 4.0;
 
+    /* Print result */
     fprintf(stdout, "pi = %f\n", piCalc);
 
     return 0;
