@@ -187,7 +187,7 @@ You will need to benchmark and analyze the behavior of the following
 three Linux Scheduling policies:
 
 \begin{itemize}
-\item \texttt{SCHED\_DEFAULT} (aka \texttt{SCHED\_NORM})
+\item \texttt{SCHED\_OTHER} (aka \texttt{SCHED\_NORM})
 \item \texttt{SCHED\_FIFO}
 \item \texttt{SCHED\_RR}
 \end{itemize}
@@ -327,7 +327,7 @@ use the \texttt{sched\_setscheduler} system call. If called at the start
 of each of your test programs, the appropriate scheduling policy
 will be inherited by any forked children within the program. You must pass
 \texttt{sched\_setscheduler} a priority level when you call it.
-The \texttt{SCHED\_DEFAULT} priority should always be
+The \texttt{SCHED\_OTHER} priority should always be
 0. \texttt{SCHED\_RR} and \texttt{SCHED\_FIFO} should have priorities
 greater than 0, but should be the same for all tests so that process
 priority is not a factor in your benchmark results. You may use the
