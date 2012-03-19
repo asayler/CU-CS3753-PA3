@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -c -g -Wall -Wextra
-LFLAGS = -Wall -Wextra
+LFLAGS = -g -Wall -Wextra
 
 .PHONY: all clean
 
-all: pi pi-sched
+all: pi pi-sched rw
 
 pi: pi.o
 	$(CC) $(LFLAGS) $^ -o $@ -lm
@@ -12,14 +12,25 @@ pi: pi.o
 pi-sched: pi-sched.o
 	$(CC) $(LFLAGS) $^ -o $@ -lm
 
+rw: rw.o rwinput
+	$(CC) $(LFLAGS) rw.o -o $@ -lm
+
 pi.o: pi.c
 	$(CC) $(CFLAGS) $<
 
 pi-sched.o: pi-sched.c
 	$(CC) $(CFLAGS) $<
 
+rw.o: rw.c
+	$(CC) $(CFLAGS) $<
+
+rwinput: Makefile
+	dd if=/dev/urandom of=./rwinput bs=1024 count=1024
+
 clean:
-	rm -f pi pi-sched
+	rm -f pi pi-sched rw
+	rm -f rwinput
+	rm -f rwoutput*
 	rm -f *.o
 	rm -f *~
 	rm -f handout/*~
