@@ -27,3 +27,6 @@ echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with 1 simultan
 
 echo Calculating pi over $ITERATIONS iterations using SCHED_RR with 1 simultaneous process...
 /usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR > /dev/null
+
+echo Copying rwinput to rwoutput using SCHED_OTHER with 1 simultaneous process...
+/usr/bin/time -f "$TIMEFORMAT" ./rw > /dev/null
