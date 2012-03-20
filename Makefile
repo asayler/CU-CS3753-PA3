@@ -2,6 +2,14 @@ CC = gcc
 CFLAGS = -c -g -Wall -Wextra
 LFLAGS = -g -Wall -Wextra
 
+INPUTFILESIZEMEGABYTES = 100
+
+KILO = 1024
+MEGA = $(shell echo $(KILO)\*$(KILO) | bc)
+INPUTFILESIZEBYTES = $(shell echo $(MEGA)\*$(INPUTFILESIZEMEGABYTES) | bc)
+INPUTBLOCKSIZEBYTES = $(KILO)
+INPUTBLOCKS = $(shell echo $(INPUTFILESIZEBYTES)\/$(INPUTBLOCKSIZEBYTES) | bc)
+
 .PHONY: all clean
 
 all: pi pi-sched rw
@@ -25,7 +33,7 @@ rw.o: rw.c
 	$(CC) $(CFLAGS) $<
 
 rwinput: Makefile
-	dd if=/dev/urandom of=./rwinput bs=1024 count=1024
+	dd if=/dev/urandom of=./rwinput bs=$(INPUTBLOCKSIZEBYTES) count=$(INPUTBLOCKS)
 
 clean:
 	rm -f pi pi-sched rw
