@@ -442,6 +442,16 @@ jumping off point (appropriately cited).
   performance of a single instance of the pi-sched program across all
   three scheduling policies.
 
+\item {\bf rw.c} The source code for a simple program that copies N
+  bytes in blocks of K bytes
+  from an input file to an output file. The program will read the input
+  file multiple times in order to generate the required number of N
+  bytes when N is larger than the size of the input file. Uses the
+  low-level \texttt{read} and \texttt{write} system calls
+  in the \texttt{O\_SYNC}
+  mode to minimize the effects of filesystem buffering and maximize
+  I/O delays. Example of an I/O bound process.
+
 \item {\bf Makefile} A GNU Make makefile to build all the code listed
   here.
 
@@ -539,6 +549,10 @@ that you access the appropriate version of each man page. See
 \item \texttt{man 2 fork}
 \item \texttt{man 2 wait}
 \item \texttt{man 2 wait4}
+\item \texttt{man 2 open}
+\item \texttt{man 2 close}
+\item \texttt{man 2 read}
+\item \texttt{man 2 write}
 \item \texttt{man 4 random}
 \item \texttt{man 4 null}
 \item \texttt{man 5 proc}
