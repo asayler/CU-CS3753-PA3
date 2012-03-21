@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -c -g -Wall -Wextra
 LFLAGS = -g -Wall -Wextra
 
-INPUTFILESIZEMEGABYTES = 100
+INPUTFILESIZEMEGABYTES = 1
 
 KILO = 1024
 MEGA = $(shell echo $(KILO)\*$(KILO) | bc)
@@ -35,12 +35,14 @@ rw.o: rw.c
 rwinput: Makefile
 	dd if=/dev/urandom of=./rwinput bs=$(INPUTBLOCKSIZEBYTES) count=$(INPUTBLOCKS)
 
-clean:
+clean: testclean
 	rm -f pi pi-sched rw
 	rm -f rwinput
-	rm -f rwoutput*
 	rm -f *.o
 	rm -f *~
 	rm -f handout/*~
 	rm -f handout/*.log
 	rm -f handout/*.aux
+
+testclean:
+	rm -f rwoutput*

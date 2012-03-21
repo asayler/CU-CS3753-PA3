@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
     double pCircle = 0.0;
     double piCalc = 0.0;
 
-    /* Process program arguments to select iterations and policy */
+    /* Process program arguments to select iterations */
     /* Set default iterations if not supplied */
     if(argc < 2){
 	iterations = DEFAULT_ITERATIONS;

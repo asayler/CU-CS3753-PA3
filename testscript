@@ -10,6 +10,8 @@
 #	and gather the relevent data.
 
 ITERATIONS=100000000
+BYTESTOCOPY=102400
+BLOCKSIZE=1024
 TIMEFORMAT="wall=%e user=%U system=%S CPU=%P i-switched=%c v-switched=%w"
 MAKE="make -s"
 
@@ -28,5 +30,5 @@ echo Calculating pi over $ITERATIONS iterations using SCHED_FIFO with 1 simultan
 echo Calculating pi over $ITERATIONS iterations using SCHED_RR with 1 simultaneous process...
 /usr/bin/time -f "$TIMEFORMAT" sudo ./pi-sched $ITERATIONS SCHED_RR > /dev/null
 
-echo Copying rwinput to rwoutput using SCHED_OTHER with 1 simultaneous process...
-/usr/bin/time -f "$TIMEFORMAT" ./rw > /dev/null
+echo Copying $BYTESTOCOPY bytes in blocks of $BLOCKSIZE from rwinput to rwoutput using SCHED_OTHER with 1 simultaneous process...
+/usr/bin/time -f "$TIMEFORMAT" ./rw $BYTESTOCOPY $BLOCKSIZE > /dev/null
