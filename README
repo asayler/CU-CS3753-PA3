@@ -19,6 +19,7 @@ handout - Assignment description and documentation
 ./pi-sched - A simple program for statistically calculating pi using
              a specific scheduling policy
 ./rw - A simple i/o bound example program.
+./rr_quantum - A simple program for determing the RR quantum.
 
 ---Examples---
 Build:
@@ -45,3 +46,6 @@ rw:
 
 testscript:
  ./testscript
+
+rr_quantum:
+ sudo ./rr_quantum
